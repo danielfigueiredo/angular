@@ -42,6 +42,7 @@ import {selectValueAccessor, composeValidators} from 'angular2/src/common/forms/
 import {TimerWrapper} from 'angular2/src/facade/async';
 import {PromiseWrapper} from 'angular2/src/facade/promise';
 import {SimpleChange} from 'angular2/src/core/change_detection';
+import {NumberValueAccessor} from 'angular2/src/common/forms/directives';
 
 class DummyControlValueAccessor implements ControlValueAccessor {
   writtenValue;
@@ -115,6 +116,24 @@ export function main() {
         it("should throw when more than one custom accessor is provided", () => {
           var customAccessor: ControlValueAccessor = <any>new SpyValueAccessor();
           expect(() => selectValueAccessor(dir, [customAccessor, customAccessor])).toThrowError();
+        });
+      });
+
+      describe("numberValueAccessor", ()  => {
+        var dir: NgControl;
+
+        beforeEach(() => { dir = <any>new SpyNgControl(); });
+
+        it("should return number selector when provided",  () => {
+          var numberAccessor = new NumberValueAccessor(null, null);
+          expect(selectValueAccessor(dir, [defaultAccessor, numberAccessor]))
+            .toEqual(numberAccessor);
+        });
+
+        it("should return null when empty string provided",  () => {
+          var numberAccessor = new NumberValueAccessor(null, null);
+          numberAccessor.registerOnChange((value) => expect(value).toBeNull());
+          numberAccessor.onChange('');
         });
       });
 
